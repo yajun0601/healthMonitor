@@ -2,6 +2,7 @@ package com.heart.heart_rate_monitor;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -28,7 +29,7 @@ import com.health.surfaceviews.Constants;
  * This class extends Activity to handle a picture preview, process the preview
  * for a red values and determine a heart beat.
  * 
- * @author Justin Wetherell <phishman3579@gmail.com>
+ * @author zheng yajun <yajun0601@gmail.com>
  */
 public class HeartRateMonitor extends Activity {
 
@@ -81,7 +82,7 @@ public class HeartRateMonitor extends Activity {
         previewHolder = preview.getHolder();
         previewHolder.addCallback(surfaceCallback);
         previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        
+       
 		surfaceViewFrame = (FrameLayout) findViewById(R.id.surfaceviewFrame);
 		view = new CanvasView(this);
 		surfaceViewFrame.addView(view, 0);
@@ -263,6 +264,8 @@ public class HeartRateMonitor extends Activity {
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             Camera.Parameters parameters = camera.getParameters();
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+
+            Log.d(TAG, "surfaceChanged width=" + width + " height=" + height);
             Camera.Size size = getSmallestPreviewSize(width, height, parameters);
             if (size != null) {
                 parameters.setPreviewSize(size.width, size.height);
@@ -292,11 +295,16 @@ public class HeartRateMonitor extends Activity {
                     int resultArea = result.width * result.height;
                     int newArea = size.width * size.height;
 
-                    if (newArea < resultArea) result = size;
+                    if (newArea < resultArea) {
+                    	result = size;
+
+                    	Log.d(TAG, "----" + "width:"+size.width +"height" + size.height);
+                    }
                 }
             }
         }
-
+        if(result != null)
+        	Log.d(TAG, "result" + "width:"+result.width +"height" + result.height);
         return result;
     }
 }

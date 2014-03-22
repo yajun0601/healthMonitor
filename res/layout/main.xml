@@ -42,11 +42,11 @@
             android:text="@string/start_btn_ON_name" />
 
     </FrameLayout>
+
 	<SurfaceView
 	    android:id="@+id/preview"
-	    android:layout_width="fill_parent"
-	    android:layout_height="0dp"
-	    android:layout_weight="0.2" >
-
+	    android:layout_width="320px"
+	    android:layout_height="240px" 
+	 >
 	</SurfaceView>
 </LinearLayout>
