@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" 
+	android:id="@+id/layout">
+	<LinearLayout android:id="@+id/top"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="horizontal" 
+        android:layout_width="fill_parent"
+        android:layout_height="50dp">
+        <TextView android:id="@+id/text"
+            android:text="@string/default_text"
+            android:textSize="32sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">        
+        </TextView>
+        <RelativeLayout
+	        android:orientation="horizontal" 
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent">
+	        <com.heart.heart_rate_monitor.HeartbeatView android:id="@+id/image"
+	        	android:layout_centerInParent="true"
+	            android:layout_width="wrap_content"
+		        android:layout_height="wrap_content">
+		    </com.heart.heart_rate_monitor.HeartbeatView>
+
+	    </RelativeLayout>
+    </LinearLayout>
+    
+    <FrameLayout
+        android:id="@+id/surfaceviewFrame"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.8" >
+
+        <ToggleButton
+            android:id="@+id/onOffToggleBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start_btn_ON_name" />
+
+    </FrameLayout>
+	<SurfaceView
+	    android:id="@+id/preview"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="0.2" >
+
+	</SurfaceView>
+</LinearLayout>
