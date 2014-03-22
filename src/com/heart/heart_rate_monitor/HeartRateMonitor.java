@@ -155,7 +155,7 @@ public class HeartRateMonitor extends Activity {
             int height = size.height;
 
             imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width);
-            view.yy = imgAvg*2;
+            view.yy = imgAvg;
             {
             	Canvas c;
             	c = null;

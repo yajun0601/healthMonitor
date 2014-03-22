@@ -15,10 +15,14 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
-
+/**
+ * This class extends the SurfaceView class and is designed draw the heartbeat wave.
+ * 
+ * @author @author zheng yajun <yajun0601@gmail.com>
+ */
 public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 
-	private static final float STROKE_WIDTH = 8;
+	private static final float STROKE_WIDTH = 2;
 
 	private UIThread uiThread;
 
@@ -70,12 +74,15 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 		xx ++;
 		if(xx > canvas.getWidth()){
 			xx = 0;
+			invalidate();
+			
 		}
 		
 
 		//if (dx >= TOUCH_TOLERANCE  || dy >= TOUCH_TOLERANCE) 
 		{
-			mPath.quadTo(mX, mY, (xx + mX)/2, (yy + mY)/2);
+			//mPath.quadTo(mX, mY, (xx + mX)/2, (yy + mY)/2);
+			mPath.lineTo(xx, yy);
 
 			mX = xx;
 			mY = yy;
@@ -84,6 +91,7 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		if (canvas != null) {
 			canvas.drawColor(Color.WHITE);
+			
 			synchronized (objectsToDraw) {
 				for (DrawableObject drawableObject : objectsToDraw) {
 					drawableObject.draw(canvas);
@@ -98,7 +106,6 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 
 	private void setPaintProperties() {
 		mPaint = new Paint();
-		mPaint.setAntiAlias(true);
 		mPaint.setAntiAlias(true);
 		mPaint.setDither(true);
 		mPaint.setColor(Color.rgb((int)xx, 100, 0));
