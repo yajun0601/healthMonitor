@@ -169,7 +169,7 @@ public class HeartRateMonitor extends Activity {
 	            }
             	
             }
-            // Log.i(TAG, "imgAvg="+imgAvg);
+            Log.i(TAG, "imgAvg="+imgAvg);
             if (imgAvg == 0 || imgAvg == 255) {
                 processing.set(false);
                 return;
@@ -265,11 +265,11 @@ public class HeartRateMonitor extends Activity {
             Camera.Parameters parameters = camera.getParameters();
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
 
-            Log.d(TAG, "surfaceChanged width=" + width + " height=" + height);
+            //Log.d(TAG, "surfaceChanged width=" + width + " height=" + height);
             Camera.Size size = getSmallestPreviewSize(width, height, parameters);
             if (size != null) {
                 parameters.setPreviewSize(size.width, size.height);
-                Log.d(TAG, "Using width=" + size.width + " height=" + size.height);
+                //Log.d(TAG, "Using width=" + size.width + " height=" + size.height);
             }
             camera.setParameters(parameters);
             camera.startPreview();

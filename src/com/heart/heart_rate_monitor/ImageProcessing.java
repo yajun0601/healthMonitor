@@ -5,10 +5,28 @@ import android.util.Log;
 /**
  * This abstract class is used to process images.
  * 
- * @author @author zheng yajun <yajun0601@gmail.com>
+ * Y'= 0.299*R' + 0.587*G' + 0.114*B'
+U'= -0.147*R' - 0.289*G' + 0.436*B' = 0.492*(B'- Y')
+V'= 0.615*R' - 0.515*G' - 0.100*B' = 0.877*(R'- Y')
+R' = Y' + 1.140*V'
+G' = Y' - 0.394*U' - 0.581*V'
+B' = Y' + 2.032*U'
+ * @author zheng yajun <yajun0601@gmail.com>
  */
 public abstract class ImageProcessing {
 	//private static final String TAG = "ImageProcessing";
+	 private static int decodeYUV420SPtoYSum(byte[] yuv420sp, int width, int height) {
+	        if (yuv420sp == null) return 0;
+
+	        final int frameSize = width * height;
+	        //Log.d(TAG, "width = " + width + "height = " + height);
+	        int sum = 0;
+	        for(int ii = 0; ii < frameSize; ii ++){
+	        	sum += yuv420sp[ii];
+	        	
+	        }
+	        return sum;
+	 }
     private static int decodeYUV420SPtoRedSum(byte[] yuv420sp, int width, int height) {
         if (yuv420sp == null) return 0;
 
@@ -72,7 +90,8 @@ public abstract class ImageProcessing {
 
         final int frameSize = width * height;
 
-        int sum = decodeYUV420SPtoRedSum(yuv420sp, width, height);
+        //int sum = decodeYUV420SPtoRedSum(yuv420sp, width, height);
+        int sum = decodeYUV420SPtoYSum(yuv420sp, width, height);
         return (sum / frameSize);
     }
 }

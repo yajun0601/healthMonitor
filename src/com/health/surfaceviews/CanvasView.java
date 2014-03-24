@@ -36,7 +36,7 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 	private float mX;
 	private float mY;
 
-	public float xx = 0, yy = 0;
+	public float xx = 0, yy = 0, yy_offset = 0;
 	private float TOUCH_TOLERANCE = 8;
 
 	private RectF dirtyRect;
@@ -74,6 +74,7 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 		xx ++;
 		if(xx > canvas.getWidth()){
 			xx = 0;
+			yy_offset += 150;
 			invalidate();
 			
 		}
@@ -82,7 +83,7 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 		//if (dx >= TOUCH_TOLERANCE  || dy >= TOUCH_TOLERANCE) 
 		{
 			//mPath.quadTo(mX, mY, (xx + mX)/2, (yy + mY)/2);
-			mPath.lineTo(xx, yy);
+			mPath.lineTo(xx, 20*yy - 1500 + yy_offset);
 
 			mX = xx;
 			mY = yy;
