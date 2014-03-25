@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,12 +27,12 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 
 	private UIThread uiThread;
 
-	private Path mPath;
-	private Paint mPaint;
+	private Path mPath = new Path();
+	private Paint mPaint = new Paint();
 
 	private Path oldPath;
 	
-	private DrawableObject drawableObject = new FreeDrawing(mPath, mPaint);;
+	private DrawableObject drawableObject;
 
 	private float mX;
 	private float mY;
@@ -50,13 +51,15 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 		getHolder().addCallback(this);
 		
 		objectsToDraw = new ArrayList<DrawableObject>();
+		//FrameLayout surfaceViewFrame = (FrameLayout) findViewById(R.id.surfaceviewFrame);
 
-		mPath = new Path();
+		drawableObject = new FreeDrawing(mPath, mPaint);
+		objectsToDraw.add(drawableObject);
+		mPath.moveTo(xx, yy);
+		mX = xx;
+		mY = yy;
 
-		FrameLayout surfaceViewFrame = (FrameLayout) findViewById(R.id.surfaceviewFrame);
-		//surfaceViewFrame.getDrawingRect(outRect);
-		
-		//xx = outRect.centerX();
+		setPaintProperties();
 	}
 
 	public void clearCanvas() {
@@ -69,7 +72,10 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		setPaintProperties();
+		if(objectsToDraw.size() == 0)
+			return;
+		if(canvas == null)
+			return;
 	
 		xx += 4;
 		if(xx > canvas.getWidth()){
@@ -86,15 +92,15 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 			//mPath.quadTo(mX, mY, (xx + mX)/2, (yy + mY)/2);
 //			mPath.lineTo(xx, 20*yy - 1500 + yy_offset);
 //			mPath.lineTo(xx, 1000 - 10*yy);
-			mPath.quadTo(mX, mY, (xx + mX)/2, (1000 - 10*yy + mY)/2);
+			mPath.quadTo(mX, mY, (xx + mX)/2, (2000 - 20*yy + mY)/2);
 			mX = xx;
-			mY = 1000 - 10*yy;
+			mY = 2000 - 20*yy;
 		}
 		
 		
 		if (canvas != null) {
 			canvas.drawColor(Color.WHITE);
-			
+			//Log.d(VIEW_LOG_TAG, "len of objectsToDraw " + objectsToDraw.size() + "mPath" );
 			synchronized (objectsToDraw) {
 				for (DrawableObject drawableObject : objectsToDraw) {
 					drawableObject.draw(canvas);
@@ -108,10 +114,9 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	private void setPaintProperties() {
-		mPaint = new Paint();
 		mPaint.setAntiAlias(true);
 		mPaint.setDither(true);
-		mPaint.setColor(Color.rgb((int)xx, 100, 0));
+		mPaint.setColor(Color.rgb((int)200, 100, 0));
 		mPaint.setStyle(Paint.Style.STROKE);
 		mPaint.setStrokeJoin(Paint.Join.ROUND);
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -122,73 +127,6 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
 		oldPath = mPath;
-	}
-
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		float x = event.getX();
-		float y = event.getY();
-		
-		switch (mMode) {
-		case Constants.FREE_DRAWING:
-			drawableObject = new FreeDrawing(mPath, mPaint);
-			break;
-
-		default:
-			break;
-		}
-		
-		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			synchronized (objectsToDraw) {
-				objectsToDraw.add(drawableObject);
-			}
-			mPath.moveTo(x, y);
-			mX = x;
-			mY = y;
-
-			break;
-
-		case MotionEvent.ACTION_MOVE:
-			switch (mMode) {
-			case Constants.FREE_DRAWING:
-				float dx = Math.abs(x - mX);
-				float dy = Math.abs(y - mY);
-
-				if (dx >= TOUCH_TOLERANCE  || dy >= TOUCH_TOLERANCE) {
-					mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-
-					mX = x;
-					mY = y;
-				}
-				break;
-			case Constants.LINE_DRAWING:
-				float lx = Math.abs(x - mX);
-				float ly = Math.abs(y - mY);
-
-				if (lx >= TOUCH_TOLERANCE  || ly >= TOUCH_TOLERANCE) {
-					mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-
-					mX = x;
-					mY = y;
-				}
-				break;
-			}
-			break;
-
-		case MotionEvent.ACTION_UP:
-			switch (mMode) {
-			case Constants.FREE_DRAWING:
-				mPath.moveTo(x, y);
-				break;
-			
-			case Constants.LINE_DRAWING:
-				mPath.moveTo(x, y);
-				break;
-			}
-			break;
-		}
-		return true;
 	}
 
 	@Override

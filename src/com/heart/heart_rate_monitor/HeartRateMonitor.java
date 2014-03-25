@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -77,7 +78,17 @@ public class HeartRateMonitor extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         onOffToggleBtn = (ToggleButton) findViewById(R.id.onOffToggleBtn);
-        onOffToggleBtn.setText(R.string.start_btn_ON_name);
+        
+        onOffToggleBtn.setOnClickListener(new OnClickListener() {      
+            public void onClick(View v) {    
+                if (onOffToggleBtn.isChecked()) {   
+                	onResume();
+                }   
+                else {              
+                	onPause();
+                }      
+            }  
+          });  
         preview = (SurfaceView) findViewById(R.id.preview);
         previewHolder = preview.getHolder();
         previewHolder.addCallback(surfaceCallback);
@@ -134,7 +145,13 @@ public class HeartRateMonitor extends Activity {
         camera.release();
         camera = null;
     }
+    private void close_camera(){
 
+        camera.setPreviewCallback(null);
+        camera.stopPreview();
+        camera.release();
+        camera = null;
+    }
     public int imgAvg(){
     	return imgAvg;
     }
@@ -169,7 +186,7 @@ public class HeartRateMonitor extends Activity {
 	            }
             	
             }
-            Log.i(TAG, "imgAvg="+imgAvg);
+            //Log.i(TAG, "imgAvg="+imgAvg);
             if (imgAvg == 0 || imgAvg == 255) {
                 processing.set(false);
                 return;
