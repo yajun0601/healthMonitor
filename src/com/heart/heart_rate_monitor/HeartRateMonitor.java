@@ -1,5 +1,6 @@
 package com.heart.heart_rate_monitor;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.ActionBar.LayoutParams;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -33,7 +35,7 @@ import com.health.surfaceviews.Constants;
  * @author zheng yajun <yajun0601@gmail.com>
  */
 public class HeartRateMonitor extends Activity {
-
+	private static int waitSeconds = 0;
     private static final String TAG = "HeartRateMonitor";
     private static final AtomicBoolean processing = new AtomicBoolean(false);
     private static SurfaceView preview = null;
@@ -49,7 +51,7 @@ public class HeartRateMonitor extends Activity {
     private static WakeLock wakeLock = null;
 
     private static int averageIndex = 0;
-    private static final int averageArraySize = 4;
+    private static final int averageArraySize = 10;
     private static final int[] averageArray = new int[averageArraySize];
 
     public static enum TYPE {
@@ -82,10 +84,12 @@ public class HeartRateMonitor extends Activity {
         onOffToggleBtn.setOnClickListener(new OnClickListener() {      
             public void onClick(View v) {    
                 if (onOffToggleBtn.isChecked()) {   
-                	onResume();
+                	wakeLock.acquire();
+                    openCamera();
                 }   
-                else {              
-                	onPause();
+                else {       
+                    wakeLock.release();
+                    close_camera();
                 }      
             }  
           });  
@@ -106,7 +110,8 @@ public class HeartRateMonitor extends Activity {
         text = (TextView) findViewById(R.id.text);
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");       
+        //setPreviewFpsRange
     }
 
     /**
@@ -117,18 +122,32 @@ public class HeartRateMonitor extends Activity {
         super.onConfigurationChanged(newConfig);
     }
 
+    private void openCamera(){
+
+        camera = Camera.open();
+        
+        Camera.Parameters camParas = camera.getParameters();
+        List<int[]> range=camParas.getSupportedPreviewFpsRange();
+        Log.d("range", "range:"+range.size());
+        for(int j=0;j<range.size();j++) {
+                int[] r=range.get(j);
+                for(int k=0;k<r.length;k++) {
+                        Log.d("....", ".."+r[k]);
+                }
+        } 
+        camParas.setPreviewFpsRange(15000, 15000);
+        camera.setParameters(camParas);
+        startTime = System.currentTimeMillis();
+    }
     /**
      * {@inheritDoc}
      */
     @Override
     public void onResume() {
         super.onResume();
-
+        //CameraInfo cameraInfo;
         wakeLock.acquire();
-
-        camera = Camera.open();
-
-        startTime = System.currentTimeMillis();
+        openCamera();
     }
 
     /**
@@ -139,11 +158,7 @@ public class HeartRateMonitor extends Activity {
         super.onPause();
 
         wakeLock.release();
-
-        camera.setPreviewCallback(null);
-        camera.stopPreview();
-        camera.release();
-        camera = null;
+        close_camera();
     }
     private void close_camera(){
 
@@ -167,10 +182,18 @@ public class HeartRateMonitor extends Activity {
             if (size == null) throw new NullPointerException();
 
             if (!processing.compareAndSet(false, true)) return;
-
+            /*
+            Camera.Parameters camParas = camera.getParameters();
+            int range[] = {3,4};
+            
+            camParas.getPreviewFpsRange(range);
+            Log.i(TAG, "preview fps: " + range.length);
+            for(int i=0; i<range.length; i ++){
+            	Log.i(TAG,"fps: " + range[i]);
+            }*/
             int width = size.width;
             int height = size.height;
-
+            //Log.i(TAG,"width: "+width + " height: "+height);
             imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width);
             view.yy = imgAvg;
             {
@@ -190,6 +213,13 @@ public class HeartRateMonitor extends Activity {
             if (imgAvg == 0 || imgAvg == 255) {
                 processing.set(false);
                 return;
+            }
+            {
+	            
+	            //double waitSeconds = (System.currentTimeMillis() - startTime) / 1000d;
+	            //if (waitSeconds < 5) {
+	            //	return;
+	            //}
             }
             
             int averageArrayAvg = 0;
@@ -213,7 +243,9 @@ public class HeartRateMonitor extends Activity {
                 newType = TYPE.GREEN;
             }
 
-            if (averageIndex == averageArraySize) averageIndex = 0;
+            if (averageIndex == averageArraySize) 
+            	averageIndex = 0;
+            
             averageArray[averageIndex] = imgAvg;
             averageIndex++;
 
