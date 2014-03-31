@@ -15,7 +15,7 @@ B' = Y' + 2.032*U'
  */
 public abstract class ImageProcessing {
 	//private static final String TAG = "ImageProcessing";
-	 private static int decodeYUV420SPtoYSum(byte[] yuv420sp, int width, int height) {
+	 static int decodeYUV420SPtoYSum(byte[] yuv420sp, int width, int height) {
 	        if (yuv420sp == null) return 0;
 
 	        final int frameSize = width * height;
@@ -94,4 +94,24 @@ public abstract class ImageProcessing {
         int sum = decodeYUV420SPtoYSum(yuv420sp, width, height);
         return (sum / frameSize);
     }
+
+/**
+ * Given a byte array representing a yuv420sp image, determine the average
+ * amount of red in the image. Note: returns 0 if the byte array is NULL.
+ * 
+ * @param yuv420sp
+ *            Byte array representing a yuv420sp image
+ * @param width
+ *            Width of the image.
+ * @param height
+ *            Height of the image.
+ * @return int representing the average amount of red in the image.
+ */
+public static int decodeYUV420SPtoAvg(byte[] yuv420sp, int width, int height) {
+    if (yuv420sp == null) return 0;
+
+    //int sum = decodeYUV420SPtoRedSum(yuv420sp, width, height);
+    int sum = decodeYUV420SPtoYSum(yuv420sp, width, height);
+    return sum ;
+}
 }

@@ -171,7 +171,18 @@ public class HeartRateMonitor extends Activity {
     	return imgAvg;
     }
     private static PreviewCallback previewCallback = new PreviewCallback() {
-    	 
+    	 public void drawWave(){
+         	Canvas c;
+         	c = null;
+	            try {
+	                c = surfaceHolder.lockCanvas(null);
+	                view.onDraw(c);
+	            } finally {
+	                if (c != null) {
+	                    surfaceHolder.unlockCanvasAndPost(c);
+	                }
+	            }
+    	 }
         /**
          * {@inheritDoc}
          */
@@ -194,34 +205,14 @@ public class HeartRateMonitor extends Activity {
             int width = size.width;
             int height = size.height;
             //Log.i(TAG,"width: "+width + " height: "+height);
-            imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width);
-            view.yy = imgAvg;
-            {
-            	Canvas c;
-            	c = null;
-	            try {
-	                c = surfaceHolder.lockCanvas(null);
-	                view.onDraw(c);
-	            } finally {
-	                if (c != null) {
-	                    surfaceHolder.unlockCanvasAndPost(c);
-	                }
-	            }
-            	
-            }
+            imgAvg = ImageProcessing.decodeYUV420SPtoYSum(data.clone(), height, width);
+
+
             //Log.i(TAG, "imgAvg="+imgAvg);
             if (imgAvg == 0 || imgAvg == 255) {
                 processing.set(false);
                 return;
             }
-            {
-	            
-	            //double waitSeconds = (System.currentTimeMillis() - startTime) / 1000d;
-	            //if (waitSeconds < 5) {
-	            //	return;
-	            //}
-            }
-            
             int averageArrayAvg = 0;
             int averageArrayCnt = 0;
             for (int i = 0; i < averageArray.length; i++) {
@@ -232,6 +223,15 @@ public class HeartRateMonitor extends Activity {
             }
 
             int rollingAverage = (averageArrayCnt > 0) ? (averageArrayAvg / averageArrayCnt) : 0;
+            if(rollingAverage !=0){
+            	int middleOfView = (view.getHeight() - view.getTop())/2;
+                 view.yy = imgAvg/(rollingAverage /middleOfView);
+                //Log.i(TAG,"Y:"+view.yy + " H:" + view.getHeight() + " avg:"+ rollingAverage +" img: " + imgAvg);
+
+            	drawWave();
+            }
+            
+            
             TYPE newType = currentType;
             if (imgAvg < rollingAverage) {
                 newType = TYPE.RED;
@@ -257,7 +257,7 @@ public class HeartRateMonitor extends Activity {
 
             long endTime = System.currentTimeMillis();
             double totalTimeInSecs = (endTime - startTime) / 1000d;
-            if (totalTimeInSecs >= 10) {
+            if (totalTimeInSecs >= 15) {
                 double bps = (beats / totalTimeInSecs);
                 int dpm = (int) (bps * 60d);
                 if (dpm < 30 || dpm > 180) {

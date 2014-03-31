@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="default_text">--</string>
-    <string name="app_name">HeartRateMonitor</string>
+    <string name="app_name">查看心率</string>
     <string name="start_btn_ON_name">开始</string>
     <string name="start_btn_OFF_name">关闭</string>
 </resources>

@@ -55,9 +55,12 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 
 		drawableObject = new FreeDrawing(mPath, mPaint);
 		objectsToDraw.add(drawableObject);
-		mPath.moveTo(xx, yy);
+
+		yy_offset = this.getHeight()/2;
 		mX = xx;
-		mY = yy;
+		mY = yy_offset;
+		mPath.moveTo(xx, yy_offset);
+
 
 		setPaintProperties();
 	}
@@ -76,14 +79,17 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 			return;
 		if(canvas == null)
 			return;
-	
+		final int deltaY= 100;
+		float y;
+		//y= yy*((1+canvas.getHeight())/deltaY - deltaY - 1);
+		y = yy*(canvas.getHeight()/deltaY) - canvas.getHeight()*(canvas.getHeight()/deltaY - 1)/2;
+		//Log.i(VIEW_LOG_TAG,"H:"+canvas.getHeight() +" W:"+canvas.getWidth()+ " yy:" + yy + " y:"+y);
 		xx += 4;
 		if(xx > canvas.getWidth()){
 			xx = 0;
 			mX = 0;
-			yy_offset += 150;
+			//yy_offset += 150;
 			clearCanvas();
-			
 		}
 		
 
@@ -92,9 +98,9 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 			//mPath.quadTo(mX, mY, (xx + mX)/2, (yy + mY)/2);
 //			mPath.lineTo(xx, 20*yy - 1500 + yy_offset);
 //			mPath.lineTo(xx, 1000 - 10*yy);
-			mPath.quadTo(mX, mY, (xx + mX)/2, (2000 - 20*yy + mY)/2);
+			mPath.quadTo(mX, mY, (xx + mX)/2, (y + mY)/2);
 			mX = xx;
-			mY = 2000 - 20*yy;
+			mY = y;
 		}
 		
 		
