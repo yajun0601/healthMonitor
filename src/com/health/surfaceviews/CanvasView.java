@@ -84,7 +84,7 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback {
 		//y= yy*((1+canvas.getHeight())/deltaY - deltaY - 1);
 		y = yy*(canvas.getHeight()/deltaY) - canvas.getHeight()*(canvas.getHeight()/deltaY - 1)/2;
 		//Log.i(VIEW_LOG_TAG,"H:"+canvas.getHeight() +" W:"+canvas.getWidth()+ " yy:" + yy + " y:"+y);
-		xx += 4;
+		xx += 8;
 		if(xx > canvas.getWidth()){
 			xx = 0;
 			mX = 0;
