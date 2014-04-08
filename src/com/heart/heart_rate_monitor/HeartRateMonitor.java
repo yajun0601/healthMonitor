@@ -3,6 +3,7 @@ package com.heart.heart_rate_monitor;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Context;
@@ -122,7 +123,8 @@ public class HeartRateMonitor extends Activity {
         super.onConfigurationChanged(newConfig);
     }
 
-    private void openCamera(){
+    @SuppressLint("NewApi")
+	private void openCamera(){
 
         camera = Camera.open();
         
@@ -225,7 +227,7 @@ public class HeartRateMonitor extends Activity {
             int rollingAverage = (averageArrayCnt > 0) ? (averageArrayAvg / averageArrayCnt) : 0;
             if(rollingAverage !=0){
             	int middleOfView = (view.getHeight() - view.getTop())/2;
-                 view.yy = imgAvg/(rollingAverage /middleOfView);
+                 view.yy = imgAvg/(rollingAverage /middleOfView + 1);
                 //Log.i(TAG,"Y:"+view.yy + " H:" + view.getHeight() + " avg:"+ rollingAverage +" img: " + imgAvg);
 
             	drawWave();
