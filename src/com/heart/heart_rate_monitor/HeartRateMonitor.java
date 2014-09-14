@@ -134,7 +134,7 @@ public class HeartRateMonitor extends Activity {
       renderer = buildRenderer(color, style, true); 
       LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
     //设置好图表的样式
-      setChartSettings(renderer, "X", "Y", 0, 100, 20, 100, Color.WHITE, Color.WHITE); 
+      setChartSettings(renderer, "X", "Y", 0, 100, -50, 50, Color.WHITE, Color.WHITE); 
       // 生成图表
       chart = ChartFactory.getLineChartView(this, mDataset, renderer); 
       //将图表添加到布局中去
@@ -315,13 +315,13 @@ public class HeartRateMonitor extends Activity {
 
             int rollingAverage = (averageArrayCnt > 0) ? (averageArrayAvg / averageArrayCnt) : 0;
             if(rollingAverage !=0){
-            	
             	int middleOfView = (chart.getHeight() - chart.getTop())/2;
-            	int yy = imgAvg/(rollingAverage /middleOfView + 1);
-            	if( yy / times > 100 ){
-            		times += 0.5;            		
+            	int yy = (imgAvg - rollingAverage)/(rollingAverage /middleOfView + 1);
+            	
+            	if( yy / times > 50 ){
+            		times += 0.1;            		
             	}
-            	if(yy/times < 20){
+            	if(yy/times < 40){
             		times -= 0.1;
             	}
                 updateChart((int)(yy/times));
