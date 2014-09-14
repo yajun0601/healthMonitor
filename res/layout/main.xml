@@ -17,8 +17,6 @@
             android:layout_height="wrap_content">        
         </TextView>
         
-
-        
         <RelativeLayout
 	        android:orientation="horizontal" 
 	        android:layout_width="wrap_content"
@@ -31,7 +29,9 @@
 
 	    </RelativeLayout>
     </LinearLayout>
-    
+    <LinearLayout android:id="@+id/chart" android:orientation="horizontal"
+                  android:layout_width="fill_parent" android:layout_height="0dip" android:layout_weight="1"/>
+	
     <FrameLayout
         android:id="@+id/surfaceviewFrame"
         android:layout_width="match_parent"
